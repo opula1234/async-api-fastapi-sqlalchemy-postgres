@@ -7,6 +7,17 @@ from app.api.schemas.shipment import ShipmentCreate, ShipmentRead, ShipmentUpdat
 router = APIRouter(prefix="/shipment", tags=["Shipment"])
 
 
+@router.get("/get_all_shipments", response_model=list[ShipmentRead])
+async def get_all_shipments(service: ServiceDep):
+    shipments = await service.get_all()
+
+    if not shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No shipments found")
+
+    return shipments
+
+
 @router.get("/", response_model=ShipmentRead)
 async def get_shipment(id: int, service: ServiceDep):
     print(panel.Panel(f"Read a shipment by #{id}", border_style='green'))

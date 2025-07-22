@@ -2,11 +2,16 @@ from datetime import datetime, timedelta
 from app.api.schemas.shipment import ShipmentCreate
 from app.database.models import Shipment, ShipmentStatus
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 
 class ShipmentService:
     def __init__(self, session: AsyncSession):
         self.session = session
+
+    async def get_all(self) -> list[Shipment]:
+        result = await self.session.execute(select(Shipment))
+        return result.scalars().all()
 
     async def get(self, id: int) -> Shipment:
         return await self.session.get(Shipment, id)
